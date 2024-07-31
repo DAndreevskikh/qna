@@ -15,7 +15,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_06_21_142716) do
   enable_extension "plpgsql"
 
   create_table "answers", force: :cascade do |t|
-    t.text "body", null: false
+    t.text "body"
     t.bigint "question_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
