@@ -1,5 +1,8 @@
-- if resource&.errors.present?
-  b = "#{resource.errors.count} error(s) detected:"
-  ul
-    - resource.errors.full_messages.each do |message|
-      li= message
+- if resource.errors.any?
+  .errors
+    h2
+      = pluralize(resource.errors.count, "error")
+      |  prohibited this #{resource.class.name.downcase} from being saved:
+    ul
+      - resource.errors.full_messages.each do |message|
+        li = message
