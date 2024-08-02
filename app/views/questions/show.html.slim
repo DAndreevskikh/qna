@@ -1,0 +1,20 @@
+h1 = @question.title
+p = @question.body
+
+- if user_signed_in? && @question.user == current_user
+  = link_to 'Delete question', @question, method: :delete, data: { confirm: 'Are you sure?' }
+
+h2 Answers
+- @question.answers.each do |answer|
+  p = answer.body
+  - if user_signed_in? && answer.user == current_user && answer.id.present?
+    = link_to 'Delete answer', question_answer_path(@question, answer), method: :delete, data: { confirm: 'Are you sure?' }
+
+- if user_signed_in?
+  = form_with model: [@question, @question.answers.build], local: true do |f|
+    = render 'shared/errors', resource: f.object
+    = f.label :body
+    = f.text_area :body
+    = f.submit 'Post your answer'
+- else
+  p You need to sign in or sign up before continuing.

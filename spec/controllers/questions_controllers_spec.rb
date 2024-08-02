@@ -1,10 +1,16 @@
 require 'rails_helper'
 
 RSpec.describe QuestionsController, type: :controller do
-  let(:question) { create(:question) }
+  let(:user) { create(:user) }
+  let(:question) { create(:question, user: user) }
+
+  before do
+    @request.env['devise.mapping'] = Devise.mappings[:user]
+    sign_in(user)
+  end
 
   describe 'GET #index' do
-    let(:questions) { create_list(:question, 3) }
+    let(:questions) { create_list(:question, 3, user: user) }
 
     before { get :index }
 
@@ -115,7 +121,7 @@ RSpec.describe QuestionsController, type: :controller do
   end
 
   describe 'DELETE #destroy' do
-    let!(:question) { create(:question) }
+    let!(:question) { create(:question, user: user) }
 
     it 'deletes the question' do
       expect { delete :destroy, params: { id: question.id } }.to change(Question, :count).by(-1)
