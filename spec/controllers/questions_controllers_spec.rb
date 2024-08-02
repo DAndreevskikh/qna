@@ -1,7 +1,13 @@
 require 'rails_helper'
 
 RSpec.describe QuestionsController, type: :controller do
+  let(:user) { create(:user) }
   let(:question) { create(:question) }
+
+  before do
+    @request.env['devise.mapping'] = Devise.mappings[:user]
+    sign_in(user)
+  end
 
   describe 'GET #index' do
     let(:questions) { create_list(:question, 3) }
@@ -42,7 +48,10 @@ RSpec.describe QuestionsController, type: :controller do
   end
 
   describe 'GET #edit' do
-    before { get :edit, params: { id: question.id } }
+    before do
+      login(user)
+      get :edit, params: { id: question.id }
+    end
 
     it 'assigns the requested question to @question' do
       expect(assigns(:question)).to eq question
@@ -54,6 +63,8 @@ RSpec.describe QuestionsController, type: :controller do
   end
 
   describe 'POST #create' do
+    before { login(user) }
+
     context 'with valid attributes' do
       it 'saves a new question in the database' do
         expect { post :create, params: { question: attributes_for(:question) } }.to change(Question, :count).by(1)
@@ -78,6 +89,8 @@ RSpec.describe QuestionsController, type: :controller do
   end
 
   describe 'PATCH #update' do
+    before { login(user) }
+
     context 'with valid attributes' do
       it 'assigns the requested question to @question' do
         patch :update, params: { id: question.id, question: attributes_for(:question) }
@@ -115,8 +128,8 @@ RSpec.describe QuestionsController, type: :controller do
   end
 
   describe 'DELETE #destroy' do
+    before { login(user) }
     let!(:question) { create(:question) }
-
     it 'deletes the question' do
       expect { delete :destroy, params: { id: question.id } }.to change(Question, :count).by(-1)
     end
